@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         data: { token, usuario: user },
       } = await API.post<LoginResponse>('/auth/login', { correo: email, password });
       dispatch({ type: AuthActionType.SIGN_UP, payload: { token, user } });
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      dispatch({ type: AuthActionType.ADD_ERROR, payload: error.response.data.msg || 'Incorrect login information' });
     } finally {
       setIsLoading(false);
     }
@@ -40,7 +40,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const logOut = () => {};
 
-  const removeError = () => {};
+  const removeError = () => {
+    dispatch({ type: AuthActionType.REMOVE_ERROR });
+  };
 
   const returnValue: AuthContextProps = {
     ...state,

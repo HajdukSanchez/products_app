@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Keyboard, KeyboardAvoidingView, Platform, Text, View } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 
 import { StackScreenProps } from '@react-navigation/stack';
 
@@ -8,15 +8,21 @@ import { styles } from './LoginScreen.styles';
 import { RootStackParamList } from '../../routes/routes';
 import { AuthContext } from '../../context/authContext/AuthContext';
 import { Background, Button, LoadingModal, Logo, TextInputForm } from '../../components';
+import { handleAlert } from '../../helpers/alert';
 
 interface LoginScreenProps extends StackScreenProps<RootStackParamList, 'Login'> {}
 
 const LoginScreen = ({ navigation: { replace } }: LoginScreenProps) => {
-  const { isLoading, signIn } = useContext(AuthContext);
+  const { isLoading, errorMessage, signIn, removeError } = useContext(AuthContext);
   const {
     form: { email, password },
     onChange,
   } = useForm({ email: '', password: '' });
+
+  useEffect(() => {
+    if (errorMessage.length === 0) return;
+    handleAlert('Bad credentials', errorMessage, 'OK', removeError);
+  }, [errorMessage]);
 
   const handleLogin = () => {
     Keyboard.dismiss(); // Dismiss keyboard
