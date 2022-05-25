@@ -1,9 +1,10 @@
-import React, { createContext, ReactNode, useReducer, useState } from 'react';
+import React, { createContext, ReactNode, useEffect, useReducer, useState } from 'react';
 
 import { API } from '../../api/api';
 import { authReducer } from './authReducer';
 import { LoginRequest, LoginResponse } from '../../models/login.model';
 import { AuthActionType, AuthContextProps, AuthState } from '../../models/authContext.model';
+import { useStorage } from '../../hooks/useStorage/useStorage';
 
 export const AuthContext = createContext({} as AuthContextProps);
 
@@ -20,7 +21,17 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { data, getItem, setItem } = useStorage();
   const [state, dispatch] = useReducer(authReducer, authInitialState);
+
+  useEffect(() => {
+    checkToken();
+  }, []);
+
+  const checkToken = async () => {
+    await getItem('TOKEN');
+    if (!data) return dispatch({ type: AuthActionType.NOT_AUTHENTICATED });
+  };
 
   const signUp = () => {};
 
@@ -30,6 +41,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const {
         data: { token, usuario: user },
       } = await API.post<LoginResponse>('/auth/login', { correo: email, password });
+      await setItem('TOKEN', token);
       dispatch({ type: AuthActionType.SIGN_UP, payload: { token, user } });
     } catch (error: any) {
       dispatch({ type: AuthActionType.ADD_ERROR, payload: error.response.data.msg || 'Incorrect login information' });
