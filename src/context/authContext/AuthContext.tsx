@@ -1,10 +1,11 @@
 import React, { createContext, ReactNode, useEffect, useReducer, useState } from 'react';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { API } from '../../api/api';
 import { authReducer } from './authReducer';
 import { LoginRequest, LoginResponse } from '../../models/login.model';
 import { AuthActionType, AuthContextProps, AuthState } from '../../models/authContext.model';
-import { useStorage } from '../../hooks/useStorage/useStorage';
 
 export const AuthContext = createContext({} as AuthContextProps);
 
@@ -21,7 +22,6 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const { data, getItem, setItem } = useStorage();
   const [state, dispatch] = useReducer(authReducer, authInitialState);
 
   useEffect(() => {
@@ -29,8 +29,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const checkToken = async () => {
-    await getItem('TOKEN');
-    if (!data) return dispatch({ type: AuthActionType.NOT_AUTHENTICATED });
+    try {
+      const tokenStored = await AsyncStorage.getItem('TOKEN');
+      if (!tokenStored) return dispatch({ type: AuthActionType.NOT_AUTHENTICATED });
+      setIsLoading(true);
+      const {
+        data: { token, usuario: user },
+        status,
+      } = await API.get<LoginResponse>('/auth');
+      if (status !== 200) return dispatch({ type: AuthActionType.NOT_AUTHENTICATED });
+      dispatch({ type: AuthActionType.SIGN_IN, payload: { token, user } });
+    } catch (error: any) {
+      dispatch({ type: AuthActionType.ADD_ERROR, payload: error.response.data.msg || 'No authenticated' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const signUp = () => {};
@@ -41,8 +54,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const {
         data: { token, usuario: user },
       } = await API.post<LoginResponse>('/auth/login', { correo: email, password });
-      await setItem('TOKEN', token);
-      dispatch({ type: AuthActionType.SIGN_UP, payload: { token, user } });
+      // await AsyncStorage.setItem('TOKEN', token);
+      dispatch({ type: AuthActionType.SIGN_IN, payload: { token, user } });
     } catch (error: any) {
       dispatch({ type: AuthActionType.ADD_ERROR, payload: error.response.data.msg || 'Incorrect login information' });
     } finally {
