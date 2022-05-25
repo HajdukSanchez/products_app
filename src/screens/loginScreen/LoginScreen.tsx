@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Keyboard, KeyboardAvoidingView, Platform, Text, View } from 'react-native';
 
 import { StackScreenProps } from '@react-navigation/stack';
@@ -6,11 +6,13 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useForm } from '../../hooks';
 import { styles } from './LoginScreen.styles';
 import { RootStackParamList } from '../../routes/routes';
-import { Background, Button, Logo, TextInputForm } from '../../components';
+import { AuthContext } from '../../context/authContext/AuthContext';
+import { Background, Button, LoadingModal, Logo, TextInputForm } from '../../components';
 
 interface LoginScreenProps extends StackScreenProps<RootStackParamList, 'Login'> {}
 
 const LoginScreen = ({ navigation: { replace } }: LoginScreenProps) => {
+  const { isLoading, signIn } = useContext(AuthContext);
   const {
     form: { email, password },
     onChange,
@@ -18,7 +20,7 @@ const LoginScreen = ({ navigation: { replace } }: LoginScreenProps) => {
 
   const handleLogin = () => {
     Keyboard.dismiss(); // Dismiss keyboard
-    // TODO: Add login logic
+    signIn({ email, password });
   };
 
   const handleRegister = () => {
@@ -28,6 +30,7 @@ const LoginScreen = ({ navigation: { replace } }: LoginScreenProps) => {
   return (
     <>
       <Background />
+      <LoadingModal isVisible={isLoading} />
       <KeyboardAvoidingView style={styles.keyBoardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.container}>
           <Logo />

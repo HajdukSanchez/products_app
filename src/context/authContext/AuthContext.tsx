@@ -1,7 +1,9 @@
-import React, { createContext, ReactNode, useReducer } from 'react';
+import React, { createContext, ReactNode, useReducer, useState } from 'react';
 
+import { API } from '../../api/api';
 import { authReducer } from './authReducer';
-import { AuthContextProps, AuthState } from '../../models/authContext.model';
+import { LoginRequest, LoginResponse } from '../../models/login.model';
+import { AuthActionType, AuthContextProps, AuthState } from '../../models/authContext.model';
 
 export const AuthContext = createContext({} as AuthContextProps);
 
@@ -17,11 +19,24 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [state, dispatch] = useReducer(authReducer, authInitialState);
 
   const signUp = () => {};
 
-  const signIn = () => {};
+  const signIn = async ({ email, password }: LoginRequest) => {
+    try {
+      setIsLoading(true);
+      const {
+        data: { token, usuario: user },
+      } = await API.post<LoginResponse>('/auth/login', { correo: email, password });
+      dispatch({ type: AuthActionType.SIGN_UP, payload: { token, user } });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const logOut = () => {};
 
@@ -29,6 +44,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const returnValue: AuthContextProps = {
     ...state,
+    isLoading,
     signUp,
     signIn,
     logOut,

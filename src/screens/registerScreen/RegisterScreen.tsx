@@ -2,12 +2,12 @@ import React from 'react';
 import { View, Text, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 
 import { StackScreenProps } from '@react-navigation/stack';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useForm } from '../../hooks';
 import { styles } from './RegisterScreen.styles';
 import { RootStackParamList } from '../../routes/routes';
-import { Button, Logo, TextInputForm } from '../../components';
-import { useForm } from '../../hooks';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Button, LoadingModal, Logo, TextInputForm } from '../../components';
 
 interface RegisterScreenProps extends StackScreenProps<RootStackParamList, 'Register'> {}
 
@@ -29,6 +29,7 @@ const RegisterScreen = ({ navigation: { replace } }: RegisterScreenProps) => {
 
   return (
     <>
+      <LoadingModal isVisible={false} />
       <KeyboardAvoidingView style={styles.keyBoardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.container}>
           <Logo />
