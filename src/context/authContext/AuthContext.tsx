@@ -32,11 +32,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const tokenStored = await AsyncStorage.getItem('TOKEN');
       if (!tokenStored) return dispatch({ type: AuthActionType.NOT_AUTHENTICATED });
+
       setIsLoading(true);
       const {
         data: { token, usuario: user },
         status,
-      } = await API.get<LoginResponse>('/auth');
+      } = await API.get<LoginResponse>('/auth', { headers: { 'x-token': tokenStored } });
       if (status !== 200) return dispatch({ type: AuthActionType.NOT_AUTHENTICATED });
       dispatch({ type: AuthActionType.SIGN_IN, payload: { token, user } });
     } catch (error: any) {
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const {
         data: { token, usuario: user },
       } = await API.post<LoginResponse>('/auth/login', { correo: email, password });
-      // await AsyncStorage.setItem('TOKEN', token);
+      await AsyncStorage.setItem('TOKEN', token);
       dispatch({ type: AuthActionType.SIGN_IN, payload: { token, user } });
     } catch (error: any) {
       dispatch({ type: AuthActionType.ADD_ERROR, payload: error.response.data.msg || 'Incorrect login information' });
