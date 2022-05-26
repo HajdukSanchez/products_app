@@ -7,11 +7,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm } from '../../hooks';
 import { styles } from './RegisterScreen.styles';
 import { handleAlert } from '../../helpers/alert';
-import { RootStackParamList } from '../../routes/routes';
+import { RootAuthStackParamList } from '../../routes/routes';
 import { AuthContext } from '../../context/authContext/AuthContext';
 import { Button, LoadingModal, Logo, TextInputForm } from '../../components';
 
-interface RegisterScreenProps extends StackScreenProps<RootStackParamList, 'Register'> {}
+interface RegisterScreenProps extends StackScreenProps<RootAuthStackParamList, 'Register'> {}
 
 const RegisterScreen = ({ navigation: { replace } }: RegisterScreenProps) => {
   const { errorMessage, isLoading, signUp, removeError } = useContext(AuthContext);

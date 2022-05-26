@@ -2,13 +2,14 @@ import React, { useContext } from 'react';
 
 import { createStackNavigator, StackNavigationOptions } from '@react-navigation/stack';
 
-import { RootStackParamList } from '../../routes/routes';
+import { RootAuthStackParamList } from '../../routes/routes';
 import { AuthContext } from '../../context/authContext/AuthContext';
-import { LoadingScreen, LoginScreen, ProtectedScreen, RegisterScreen } from '../../screens';
+import { LoadingScreen, LoginScreen, RegisterScreen } from '../../screens';
+import { ProductsStackNavigator } from '../productsStackNavigator/ProductsStackNavigator';
 
-const { Navigator, Screen } = createStackNavigator<RootStackParamList>();
+const { Navigator, Screen } = createStackNavigator<RootAuthStackParamList>();
 
-const StackNavigator = () => {
+const AuthStackNavigator = () => {
   const { status } = useContext(AuthContext);
 
   if (status === 'checking') return <LoadingScreen />; // Initial state
@@ -21,7 +22,9 @@ const StackNavigator = () => {
           <Screen name="Register" component={RegisterScreen} />
         </>
       ) : (
-        <Screen name="Protected" component={ProtectedScreen} />
+        <>
+          <Screen name="ProductsStack" component={ProductsStackNavigator} />
+        </>
       )}
     </Navigator>
   );
@@ -31,4 +34,4 @@ const _screenOptions: StackNavigationOptions = {
   headerShown: false,
 };
 
-export { StackNavigator };
+export { AuthStackNavigator };

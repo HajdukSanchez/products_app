@@ -5,12 +5,12 @@ import { StackScreenProps } from '@react-navigation/stack';
 
 import { useForm } from '../../hooks';
 import { styles } from './LoginScreen.styles';
-import { RootStackParamList } from '../../routes/routes';
+import { RootAuthStackParamList } from '../../routes/routes';
 import { AuthContext } from '../../context/authContext/AuthContext';
 import { Background, Button, LoadingModal, Logo, TextInputForm } from '../../components';
 import { handleAlert } from '../../helpers/alert';
 
-interface LoginScreenProps extends StackScreenProps<RootStackParamList, 'Login'> {}
+interface LoginScreenProps extends StackScreenProps<RootAuthStackParamList, 'Login'> {}
 
 const LoginScreen = ({ navigation: { replace } }: LoginScreenProps) => {
   const { isLoading, errorMessage, signIn, removeError } = useContext(AuthContext);

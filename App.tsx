@@ -3,7 +3,7 @@ import { StatusBar } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 
-import { StackNavigator } from './src/navigator';
+import { AuthStackNavigator } from './src/navigator';
 import { AuthProvider } from './src/context/authContext/AuthContext';
 import { ProductsProvider } from './src/context/ProductsContext/productsContext';
 
@@ -16,7 +16,7 @@ const App = () => {
     <NavigationContainer>
       <StatusBar backgroundColor={'transparent'} translucent />
       <_AppState>
-        <StackNavigator />
+        <AuthStackNavigator />
       </_AppState>
     </NavigationContainer>
   );
