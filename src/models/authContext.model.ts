@@ -1,4 +1,5 @@
 import { LoginRequest } from './login.model';
+import { RegisterRequest } from './register.model';
 import { User } from './user.model';
 
 /**
@@ -22,7 +23,7 @@ export type AuthContextProps = {
   user: User | null;
   status: AuthContextStatus;
   isLoading: boolean;
-  signUp: () => void;
+  signUp: (data: RegisterRequest) => void;
   signIn: (data: LoginRequest) => void;
   logOut: () => void;
   removeError: () => void;

@@ -6,6 +6,7 @@ import { API } from '../../api/api';
 import { authReducer } from './authReducer';
 import { LoginRequest, LoginResponse } from '../../models/login.model';
 import { AuthActionType, AuthContextProps, AuthState, AuthStorageData } from '../../models/authContext.model';
+import { RegisterRequest } from '../../models/register.model';
 
 export const AuthContext = createContext({} as AuthContextProps);
 
@@ -47,7 +48,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const signUp = () => {};
+  const signUp = async ({ email: correo, name: nombre, password }: RegisterRequest) => {
+    try {
+      setIsLoading(true);
+      const {
+        data: { token, usuario: user },
+      } = await API.post<LoginResponse>('/usuarios', { nombre, correo, password });
+      dispatch({ type: AuthActionType.SIGN_UP, payload: { token, user } });
+      await AsyncStorage.setItem(AuthStorageData.TOKEN, token);
+    } catch (error: any) {
+      dispatch({ type: AuthActionType.ADD_ERROR, payload: error.response.data.error[0].msg || 'Incorrect register information' });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const signIn = async ({ email, password }: LoginRequest) => {
     try {

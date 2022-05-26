@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { View, Text, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 
 import { StackScreenProps } from '@react-navigation/stack';
@@ -7,20 +7,28 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useForm } from '../../hooks';
 import { styles } from './RegisterScreen.styles';
 import { RootStackParamList } from '../../routes/routes';
+import { AuthContext } from '../../context/authContext/AuthContext';
+import { handleAlert } from '../../helpers/alert';
 import { Button, LoadingModal, Logo, TextInputForm } from '../../components';
 
 interface RegisterScreenProps extends StackScreenProps<RootStackParamList, 'Register'> {}
 
 const RegisterScreen = ({ navigation: { replace } }: RegisterScreenProps) => {
+  const { errorMessage, isLoading, signUp, removeError } = useContext(AuthContext);
   const {
     form: { name, email, password },
     onChange,
   } = useForm({ name: '', email: '', password: '' });
   const { top, right } = useSafeAreaInsets();
 
+  useEffect(() => {
+    if (errorMessage.length === 0) return;
+    handleAlert('Bad register', errorMessage, 'OK', removeError);
+  }, [errorMessage]);
+
   const handleRegister = () => {
     Keyboard.dismiss(); // Dismiss keyboard
-    // TODO: Add Register logic
+    signUp({ name, email, password });
   };
 
   const handleLogin = () => {
@@ -29,7 +37,7 @@ const RegisterScreen = ({ navigation: { replace } }: RegisterScreenProps) => {
 
   return (
     <>
-      <LoadingModal isVisible={false} />
+      <LoadingModal isVisible={isLoading} />
       <KeyboardAvoidingView style={styles.keyBoardView} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.container}>
           <Logo />
