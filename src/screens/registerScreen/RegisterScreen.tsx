@@ -6,9 +6,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useForm } from '../../hooks';
 import { styles } from './RegisterScreen.styles';
+import { handleAlert } from '../../helpers/alert';
 import { RootStackParamList } from '../../routes/routes';
 import { AuthContext } from '../../context/authContext/AuthContext';
-import { handleAlert } from '../../helpers/alert';
 import { Button, LoadingModal, Logo, TextInputForm } from '../../components';
 
 interface RegisterScreenProps extends StackScreenProps<RootStackParamList, 'Register'> {}

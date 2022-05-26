@@ -14,7 +14,7 @@ const ProtectedScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{`Hello ' ${user?.nombre} '\nThis is your information`}</Text>
+      <Text style={styles.title}>{`Hello again\n${user?.nombre}`}</Text>
       <Text style={styles.text}>{JSON.stringify(user, null, 5)}</Text>
       <Button text="Log Out" onPress={handleLogOut} />
       <Text style={styles.text}>{JSON.stringify(token, null, 5)}</Text>

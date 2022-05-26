@@ -1,6 +1,6 @@
-import { LoginRequest } from './login.model';
-import { RegisterRequest } from './register.model';
-import { User } from './user.model';
+import { LoginRequest } from '../../models/login.model';
+import { RegisterRequest } from '../../models/register.model';
+import { User } from '../../models/user.model';
 
 /**
  * Keys for the async storage

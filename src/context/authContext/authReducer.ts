@@ -1,5 +1,5 @@
 import { User } from '../../models/user.model';
-import { AuthActionType, AuthState } from '../../models/authContext.model';
+import { AuthActionType, AuthState } from './authContext.model';
 
 type AuthAction =
   | { type: AuthActionType.SIGN_IN; payload: { token: string; user: User } }

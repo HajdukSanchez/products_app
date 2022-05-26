@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import { StackNavigator } from './src/navigator';
 import { AuthProvider } from './src/context/authContext/AuthContext';
+import { ProductsProvider } from './src/context/ProductsContext/productsContext';
 
 interface AppStateProps {
   children: ReactNode | ReactNode[];
@@ -22,7 +23,11 @@ const App = () => {
 };
 
 const _AppState = ({ children }: AppStateProps) => {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AuthProvider>
+      <ProductsProvider>{children}</ProductsProvider>
+    </AuthProvider>
+  );
 };
 
 export { App };

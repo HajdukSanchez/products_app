@@ -4,9 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { API } from '../../api/api';
 import { authReducer } from './authReducer';
-import { LoginRequest, LoginResponse } from '../../models/login.model';
-import { AuthActionType, AuthContextProps, AuthState, AuthStorageData } from '../../models/authContext.model';
 import { RegisterRequest } from '../../models/register.model';
+import { LoginRequest, LoginResponse } from '../../models/login.model';
+import { AuthActionType, AuthContextProps, AuthState, AuthStorageData } from './authContext.model';
 
 export const AuthContext = createContext({} as AuthContextProps);
 
