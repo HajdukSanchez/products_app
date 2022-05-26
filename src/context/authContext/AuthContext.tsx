@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API } from '../../api/api';
 import { authReducer } from './authReducer';
 import { LoginRequest, LoginResponse } from '../../models/login.model';
-import { AuthActionType, AuthContextProps, AuthState } from '../../models/authContext.model';
+import { AuthActionType, AuthContextProps, AuthState, AuthStorageData } from '../../models/authContext.model';
 
 export const AuthContext = createContext({} as AuthContextProps);
 
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const checkToken = async () => {
     try {
-      const tokenStored = await AsyncStorage.getItem('TOKEN');
+      const tokenStored = await AsyncStorage.getItem(AuthStorageData.TOKEN);
       if (!tokenStored) return dispatch({ type: AuthActionType.NOT_AUTHENTICATED });
 
       setIsLoading(true);
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const {
         data: { token, usuario: user },
       } = await API.post<LoginResponse>('/auth/login', { correo: email, password });
-      await AsyncStorage.setItem('TOKEN', token);
+      await AsyncStorage.setItem(AuthStorageData.TOKEN, token);
       dispatch({ type: AuthActionType.SIGN_IN, payload: { token, user } });
     } catch (error: any) {
       dispatch({ type: AuthActionType.ADD_ERROR, payload: error.response.data.msg || 'Incorrect login information' });
@@ -64,7 +64,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const logOut = () => {};
+  const logOut = async () => {
+    await AsyncStorage.removeItem(AuthStorageData.TOKEN);
+    dispatch({ type: AuthActionType.LOG_OUT });
+  };
 
   const removeError = () => {
     dispatch({ type: AuthActionType.REMOVE_ERROR });

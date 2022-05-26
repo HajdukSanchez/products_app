@@ -2,6 +2,13 @@ import { LoginRequest } from './login.model';
 import { User } from './user.model';
 
 /**
+ * Keys for the async storage
+ */
+export enum AuthStorageData {
+  TOKEN = 'TOKEN',
+}
+
+/**
  * Types pf status in our auth process
  */
 type AuthContextStatus = 'checking' | 'authenticated' | 'unauthenticated';
