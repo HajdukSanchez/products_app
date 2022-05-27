@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     ...globalStyles.label,
     marginTop: 0,
     marginLeft: 10,
-		fontSize: 15,
+    fontSize: 15,
   },
   productCategory: {
     marginTop: 3,
@@ -47,5 +47,18 @@ export const styles = StyleSheet.create({
     marginVertical: 10,
     color: 'rgba(0,0,0,0.1)',
     borderBottomWidth: 2,
+  },
+  headerButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: 100,
+  },
+  headerButtonText: {
+		color: 'white',
+    fontSize: 30,
+		fontWeight: 'bold',
   },
 });

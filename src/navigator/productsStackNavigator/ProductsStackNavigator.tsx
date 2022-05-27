@@ -11,7 +11,7 @@ const ProductsStackNavigator = () => {
   return (
     <Navigator screenOptions={_screenOptions} initialRouteName="Products">
       <Screen name="Products" component={ProductsScreen} />
-      <Screen name="Product" component={ProductScreen} />
+      <Screen name="Product" component={ProductScreen} options={{ headerShown: true, headerTitleAlign: 'center' }} />
       <Screen name="Protected" component={ProtectedScreen} />
     </Navigator>
   );
