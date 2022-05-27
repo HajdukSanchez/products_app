@@ -1,6 +1,7 @@
 import { Product } from '../../models/product.model';
 
 export type ProductsContextProps = {
+	loading: boolean;
   products: Product[];
   loadProducts: () => Promise<void>;
   loadProductById: () => Promise<Product>;

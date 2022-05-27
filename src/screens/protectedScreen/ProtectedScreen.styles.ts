@@ -6,7 +6,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#5856D6',
+    ...globalStyles.background,
   },
   title: {
     ...globalStyles.title,

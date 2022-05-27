@@ -20,4 +20,7 @@ export const globalStyles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#4a48a7',
   },
+  background: {
+    backgroundColor: '#5856D6',
+  },
 });

@@ -1,7 +1,8 @@
-import React, { createContext, ReactNode, useState } from 'react';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
 
-import { Product } from '../../models/product.model';
+import { API } from '../../api/api';
 import { ProductsContextProps } from './productsContext.model';
+import { Product, ProductsResponse } from '../../models/product.model';
 
 interface ProductsProviderProps {
   children: ReactNode | ReactNode[];
@@ -11,9 +12,23 @@ export const ProductsContext = createContext({} as ProductsContextProps);
 
 export const ProductsProvider = ({ children }: ProductsProviderProps) => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const loadProducts = async (): Promise<void> => {
-    return new Promise(() => {});
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      setLoading(true);
+      const {
+        data: { productos },
+      } = await API.get<ProductsResponse>('/productos?limit=50');
+      setProducts([...products, ...productos]);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const loadProductById = async (): Promise<Product> => {
@@ -38,6 +53,7 @@ export const ProductsProvider = ({ children }: ProductsProviderProps) => {
   };
 
   const returnValue: ProductsContextProps = {
+    loading,
     products,
     addProduct,
     uploadImage,
