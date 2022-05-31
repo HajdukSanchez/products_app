@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
     ...globalStyles.background,
     flex: 1,
     paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   product: {},
   productContainer: {

@@ -1,16 +1,17 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, ScrollView, Image } from 'react-native';
 
 import { Picker } from '@react-native-picker/picker';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import { styles } from './ProductScreen.styles';
 import { useForm, useCategory } from '../../hooks';
 import { Category } from '../../models/categories.model';
 import { RootProductsStackParamList } from '../../routes/routes';
 import { Button, HeaderTitle, TextInputForm } from '../../components';
-import { ProductsContext } from '../../context/productsContext/ProductsContext';
+import { ProductsContext } from '../../context/productsContext/productsContext';
 
 interface ProductScreenProps extends StackScreenProps<RootProductsStackParamList, 'Product'> {}
 
@@ -19,9 +20,10 @@ const ProductScreen = ({
     params: { product },
   },
 }: ProductScreenProps) => {
+  const [temporalImageURL, setTemporalImageURL] = useState<string>();
   const { top } = useSafeAreaInsets();
   const { categories } = useCategory();
-  const { loadProductById, addProduct, updateProduct } = useContext(ProductsContext);
+  const { loadProductById, addProduct, updateProduct, uploadImage } = useContext(ProductsContext);
   const { _id, categoryId, nombre, img, onChange, setFormValue } = useForm({
     img: '',
     categoryId: '',
@@ -53,9 +55,21 @@ const ProductScreen = ({
     }
   };
 
-  const handleCamera = () => {};
+  const handleCamera = () => {
+    launchCamera({ mediaType: 'photo', cameraType: 'back', quality: 0.5 }, response => {
+      if (response.didCancel) return;
+      if (response.assets) setTemporalImageURL(response.assets[0].uri);
+      uploadImage(response, product);
+    });
+  };
 
-  const handleGallery = () => {};
+  const handleGallery = () => {
+    launchImageLibrary({ mediaType: 'photo' }, response => {
+      console.log(response);
+      // if (response.didCancel) return;
+      // if (response.assets) setTemporalImageURL(response.assets[0].uri);
+    });
+  };
 
   return (
     <ScrollView style={{ ...styles.container, paddingTop: top + 20 }}>
@@ -76,12 +90,9 @@ const ProductScreen = ({
           <Picker.Item label={category.nombre} value={category._id} key={category._id} />
         ))}
       </Picker>
-      {!!_id && (
-        <>
-          <Text style={styles.label}>Image</Text>
-          <Image source={img ? { uri: img } : require('../../assets/images/image-not-found.png')} style={styles.image} />
-        </>
-      )}
+      <Text style={styles.label}>Image</Text>
+      {!!_id && !temporalImageURL && <Image source={img ? { uri: img } : require('../../assets/images/image-not-found.png')} style={styles.image} />}
+      {!!_id && temporalImageURL && <Image source={{ uri: temporalImageURL }} style={styles.image} />}
       {!!_id && (
         <View style={styles.optionsContainer}>
           <Button text="Camera" onPress={handleCamera} withBorder={false} />

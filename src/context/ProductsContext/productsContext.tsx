@@ -1,11 +1,12 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 
+import { ImagePickerResponse } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { API } from '../../api/api';
 import { ProductsContextProps } from './productsContext.model';
 import { AuthStorageData } from '../authContext/authContext.model';
-import { Product, ProductInsertDTO, ProductsResponse, ProductUpdateDTO } from '../../models/product.model';
+import { Product, ProductInsertDTO, ProductsResponse, ProductUpdateDTO, ProductUpdateImageDTO } from '../../models/product.model';
 
 interface ProductsProviderProps {
   children: ReactNode | ReactNode[];
@@ -89,9 +90,35 @@ export const ProductsProvider = ({ children }: ProductsProviderProps) => {
     return new Promise(() => {});
   };
 
-  // TODO: Change this any
-  const uploadImage = async (data: any, product: Product): Promise<void> => {
-    return new Promise(() => {});
+  const uploadImage = async (imageData: ImagePickerResponse, product: Product): Promise<void> => {
+    try {
+      setLoading(true);
+      if (imageData.assets) {
+        const fileToUpload: ProductUpdateImageDTO = {
+          uri: imageData.assets[0].uri || '',
+          type: imageData.assets[0].type || '',
+          name: imageData.assets[0].fileName || '',
+        };
+        const formData = new FormData(); // Data to send image to server
+        formData.append('archivo', fileToUpload);
+        const { data } = await API.put<Product>(`/uploads/productos/${product._id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        setProducts(
+          products.map((item: Product) => {
+            const newProduct: Product = item;
+            if (item._id === product._id) {
+              newProduct.img = data.img; // Update the product image in the list
+            }
+            return newProduct;
+          }),
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const returnValue: ProductsContextProps = {

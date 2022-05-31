@@ -28,3 +28,9 @@ export interface ProductInsertDTO {
 }
 
 export interface ProductUpdateDTO extends Omit<ProductInsertDTO, 'categoria'> {}
+
+export interface ProductUpdateImageDTO {
+  uri: string;
+  type: string;
+  name: string;
+}

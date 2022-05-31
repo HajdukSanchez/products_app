@@ -1,3 +1,4 @@
+import { ImagePickerResponse } from 'react-native-image-picker';
 import { Product, ProductInsertDTO, ProductUpdateDTO } from '../../models/product.model';
 
 export type ProductsContextProps = {
@@ -8,5 +9,5 @@ export type ProductsContextProps = {
   addProduct: (product: ProductInsertDTO) => Promise<Product | null>;
   updateProduct: (id: string, product: ProductUpdateDTO) => Promise<void>;
   deleteProduct: (product: Product) => Promise<void>;
-  uploadImage: (data: any, product: Product) => Promise<void>; // TODO: Change this any
+  uploadImage: (data: ImagePickerResponse, product: Product) => Promise<void>;
 };
