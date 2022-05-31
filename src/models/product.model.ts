@@ -9,7 +9,7 @@ export interface Product {
   nombre: string;
   categoria: CategoryProduct;
   usuario: UserProduct;
-  img: string;
+  img?: string;
 }
 
 export interface CategoryProduct {
@@ -21,3 +21,10 @@ export interface UserProduct {
   _id: string;
   nombre: string;
 }
+
+export interface ProductInsertDTO {
+  nombre: string;
+  categoria: string;
+}
+
+export interface ProductUpdateDTO extends Omit<ProductInsertDTO, 'categoria'> {}

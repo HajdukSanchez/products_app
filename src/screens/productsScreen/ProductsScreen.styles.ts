@@ -45,8 +45,8 @@ export const styles = StyleSheet.create({
   },
   separator: {
     marginVertical: 10,
-    color: 'rgba(0,0,0,0.1)',
-    borderBottomWidth: 2,
+    borderColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 1,
   },
   headerButton: {
     justifyContent: 'center',
@@ -57,8 +57,8 @@ export const styles = StyleSheet.create({
     borderRadius: 100,
   },
   headerButtonText: {
-		color: 'white',
+    color: 'white',
     fontSize: 30,
-		fontWeight: 'bold',
+    fontWeight: 'bold',
   },
 });

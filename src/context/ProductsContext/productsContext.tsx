@@ -1,8 +1,11 @@
 import React, { createContext, ReactNode, useEffect, useState } from 'react';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { API } from '../../api/api';
 import { ProductsContextProps } from './productsContext.model';
-import { Product, ProductsResponse } from '../../models/product.model';
+import { AuthStorageData } from '../authContext/authContext.model';
+import { Product, ProductInsertDTO, ProductsResponse, ProductUpdateDTO } from '../../models/product.model';
 
 interface ProductsProviderProps {
   children: ReactNode | ReactNode[];
@@ -47,12 +50,39 @@ export const ProductsProvider = ({ children }: ProductsProviderProps) => {
     return product;
   };
 
-  const addProduct = async (product: Product): Promise<void> => {
-    return new Promise(() => {});
+  const addProduct = async (product: ProductInsertDTO): Promise<Product | null> => {
+    let newProduct: Product | null;
+    try {
+      setLoading(true);
+      const tokenStored = await AsyncStorage.getItem(AuthStorageData.TOKEN);
+      console.log({ tokenStored, product });
+      const { data } = await API.post<Product>(
+        '/productos',
+        { nombre: product.nombre, categoria: product.categoria },
+        { headers: { 'x-token': tokenStored! } },
+      );
+      setProducts([...products, data]);
+      newProduct = data || null;
+    } catch (error) {
+      console.error(error);
+      newProduct = null;
+    } finally {
+      setLoading(false);
+    }
+    return newProduct;
   };
 
-  const updateProduct = async (product: Product): Promise<void> => {
-    return new Promise(() => {});
+  const updateProduct = async (id: string, product: ProductUpdateDTO): Promise<void> => {
+    try {
+      setLoading(true);
+      const tokenStored = await AsyncStorage.getItem(AuthStorageData.TOKEN);
+      const { data } = await API.put<Product>(`/productos/${id}`, { nombre: product.nombre }, { headers: { 'x-token': tokenStored! } });
+      setProducts(products.map((productItem: Product) => (productItem._id === id ? data : productItem))); // Filter the product and replace it
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const deleteProduct = async (product: Product): Promise<void> => {

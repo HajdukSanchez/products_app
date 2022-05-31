@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, Image } from 'react-native';
 
 import { Picker } from '@react-native-picker/picker';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -9,8 +9,8 @@ import { styles } from './ProductScreen.styles';
 import { useForm, useCategory } from '../../hooks';
 import { Category } from '../../models/categories.model';
 import { RootProductsStackParamList } from '../../routes/routes';
-import { Button, HeaderTitle, TextInputForm } from '../../components';
 import { ProductsContext } from '../../context/productsContext/ProductsContext';
+import { Button, HeaderTitle, LoadingModal, TextInputForm } from '../../components';
 
 interface ProductScreenProps extends StackScreenProps<RootProductsStackParamList, 'Product'> {}
 
@@ -20,8 +20,8 @@ const ProductScreen = ({
   },
 }: ProductScreenProps) => {
   const { top } = useSafeAreaInsets();
-  const { categories } = useCategory();
-  const { loadProductById } = useContext(ProductsContext);
+  const { categories, isLoading: loadingCategories } = useCategory();
+  const { loading, loadProductById, addProduct, updateProduct } = useContext(ProductsContext);
   const { _id, categoryId, nombre, img, onChange, setFormValue } = useForm({
     img: '',
     categoryId: '',
@@ -40,11 +40,18 @@ const ProductScreen = ({
       _id: product._id || '',
       img: productData?.img || '',
       nombre: productData?.nombre || '',
-      categoryId: productData?.categoria._id || '',
+      categoryId: productData?.categoria?._id || '',
     });
   };
 
-  const handleSaveProduct = () => {};
+  const handleSaveOrUpdateProduct = async () => {
+    if (!!_id) {
+      updateProduct(_id, { nombre: nombre.trim() });
+    } else {
+      const newProduct = await addProduct({ nombre: nombre.trim(), categoria: categoryId });
+      if (newProduct) onChange(newProduct._id, '_id');
+    }
+  };
 
   const handleCamera = () => {};
 
@@ -52,8 +59,9 @@ const ProductScreen = ({
 
   return (
     <ScrollView style={{ ...styles.container, paddingTop: top + 20 }}>
+      <LoadingModal isVisible={loading || loadingCategories} />
       <HeaderTitle title={nombre || 'Product name'} />
-      <Text style={styles.label}>Product Name</Text>
+      <Text style={styles.label}>Name</Text>
       <TextInputForm
         value={nombre !== 'New Product' ? nombre : ''}
         autoCapitalize="words"
@@ -69,11 +77,19 @@ const ProductScreen = ({
           <Picker.Item label={category.nombre} value={category._id} key={category._id} />
         ))}
       </Picker>
-      <Button text="Save" onPress={handleSaveProduct} />
-      <View style={styles.optionsContainer}>
-        <Button text="Camera" onPress={handleCamera} />
-        <Button text="Gallery" onPress={handleGallery} />
-      </View>
+      {!!_id && (
+        <>
+          <Text style={styles.label}>Image</Text>
+          <Image source={img ? { uri: img } : require('../../assets/images/image-not-found.png')} style={styles.image} />
+        </>
+      )}
+      {!!_id && (
+        <View style={styles.optionsContainer}>
+          <Button text="Camera" onPress={handleCamera} withBorder={false} />
+          <Button text="Gallery" onPress={handleGallery} withBorder={false} />
+        </View>
+      )}
+      <Button text={_id ? 'Update' : 'Save'} onPress={handleSaveOrUpdateProduct} />
     </ScrollView>
   );
 };
