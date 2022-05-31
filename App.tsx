@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 import { AuthStackNavigator } from './src/navigator';
 import { AuthProvider } from './src/context/authContext/AuthContext';
-import { ProductsProvider } from './src/context/ProductsContext/productsContext';
+import { ProductsProvider } from './src/context/productsContext/ProductsContext';
 
 interface AppStateProps {
   children: ReactNode | ReactNode[];

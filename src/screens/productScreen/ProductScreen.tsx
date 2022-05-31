@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 
 import { Picker } from '@react-native-picker/picker';
 import { StackScreenProps } from '@react-navigation/stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { styles } from './ProductScreen.styles';
+import { useForm, useCategory } from '../../hooks';
 import { Category } from '../../models/categories.model';
 import { RootProductsStackParamList } from '../../routes/routes';
 import { Button, HeaderTitle, TextInputForm } from '../../components';
-import { useCategory } from '../../hooks/useCategories/useCategories';
+import { ProductsContext } from '../../context/productsContext/ProductsContext';
 
 interface ProductScreenProps extends StackScreenProps<RootProductsStackParamList, 'Product'> {}
 
@@ -19,11 +20,28 @@ const ProductScreen = ({
   },
 }: ProductScreenProps) => {
   const { top } = useSafeAreaInsets();
-  const [pageTitle, setPageTitle] = useState<string>(product.nombre ? product.nombre : 'New Product');
-  const { categories, category, setCategory } = useCategory();
+  const { categories } = useCategory();
+  const { loadProductById } = useContext(ProductsContext);
+  const { _id, categoryId, nombre, img, onChange, setFormValue } = useForm({
+    img: '',
+    categoryId: '',
+    _id: product._id || '',
+    nombre: product.nombre || 'New Product',
+  });
 
-  const handleProductName = (text: string) => {
-    setPageTitle(text);
+  useEffect(() => {
+    loadProduct();
+  }, []);
+
+  const loadProduct = async () => {
+    if (!_id) return;
+    const productData = await loadProductById(_id);
+    setFormValue({
+      _id: product._id || '',
+      img: productData?.img || '',
+      nombre: productData?.nombre || '',
+      categoryId: productData?.categoria._id || '',
+    });
   };
 
   const handleSaveProduct = () => {};
@@ -33,20 +51,20 @@ const ProductScreen = ({
   const handleGallery = () => {};
 
   return (
-    <View style={{ ...styles.container, paddingTop: top + 20 }}>
-      <HeaderTitle title={pageTitle.length > 0 ? pageTitle : 'Product name'} />
+    <ScrollView style={{ ...styles.container, paddingTop: top + 20 }}>
+      <HeaderTitle title={nombre || 'Product name'} />
       <Text style={styles.label}>Product Name</Text>
       <TextInputForm
-        value={pageTitle !== 'New Product' ? pageTitle : ''}
+        value={nombre !== 'New Product' ? nombre : ''}
         autoCapitalize="words"
         keyboardType="default"
         placeholder="Product"
         placeholderTextColor="white"
         autoCorrect={false}
-        onChangeText={text => handleProductName(text)}
+        onChangeText={text => onChange(text, 'nombre')}
       />
       <Text style={styles.label}>Category</Text>
-      <Picker selectedValue={category} onValueChange={itemValue => setCategory(itemValue)}>
+      <Picker selectedValue={categoryId} onValueChange={itemValue => onChange(itemValue, 'categoryId')}>
         {categories.map((category: Category) => (
           <Picker.Item label={category.nombre} value={category._id} key={category._id} />
         ))}
@@ -56,7 +74,7 @@ const ProductScreen = ({
         <Button text="Camera" onPress={handleCamera} />
         <Button text="Gallery" onPress={handleGallery} />
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

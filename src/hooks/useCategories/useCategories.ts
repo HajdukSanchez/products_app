@@ -5,7 +5,6 @@ import { CategoriesResponse, Category } from '../../models/categories.model';
 
 const useCategory = () => {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [category, setCategory] = useState<Category>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -26,7 +25,7 @@ const useCategory = () => {
     }
   };
 
-  return { categories, isLoading, category, setCategory };
+  return { categories, isLoading };
 };
 
 export { useCategory };

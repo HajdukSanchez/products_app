@@ -8,7 +8,7 @@ import { HeaderTitle } from '../../components';
 import { styles } from './ProductsScreen.styles';
 import { Product } from '../../models/product.model';
 import { RootProductsStackParamList } from '../../routes/routes';
-import { ProductsContext } from '../../context/ProductsContext/productsContext';
+import { ProductsContext } from '../../context/productsContext/ProductsContext';
 
 interface ProductItemProps {
   product: Product;

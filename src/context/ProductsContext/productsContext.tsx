@@ -18,7 +18,7 @@ export const ProductsProvider = ({ children }: ProductsProviderProps) => {
     loadProducts();
   }, []);
 
-  const loadProducts = async () => {
+  const loadProducts = async (): Promise<void> => {
     try {
       setLoading(true);
       const {
@@ -26,13 +26,25 @@ export const ProductsProvider = ({ children }: ProductsProviderProps) => {
       } = await API.get<ProductsResponse>('/productos?limit=50');
       setProducts([...products, ...productos]);
     } catch (error) {
+      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
-  const loadProductById = async (): Promise<Product> => {
-    return new Promise(() => {});
+  const loadProductById = async (id: string): Promise<Product | null> => {
+    let product: Product | null;
+    try {
+      setLoading(true);
+      const { data } = await API.get<Product>(`/productos/${id}`);
+      product = data || null;
+    } catch (error) {
+      console.error(error);
+      product = null;
+    } finally {
+      setLoading(false);
+    }
+    return product;
   };
 
   const addProduct = async (product: Product): Promise<void> => {
