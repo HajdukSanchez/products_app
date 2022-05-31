@@ -64,10 +64,10 @@ const ProductScreen = ({
   };
 
   const handleGallery = () => {
-    launchImageLibrary({ mediaType: 'photo' }, response => {
-      console.log(response);
-      // if (response.didCancel) return;
-      // if (response.assets) setTemporalImageURL(response.assets[0].uri);
+    launchImageLibrary({ mediaType: 'photo', quality: 0.5 }, response => {
+      if (response.didCancel) return;
+      if (response.assets) setTemporalImageURL(response.assets[0].uri);
+      uploadImage(response, product);
     });
   };
 
