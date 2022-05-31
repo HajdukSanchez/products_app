@@ -27,7 +27,7 @@ export const ProductsProvider = ({ children }: ProductsProviderProps) => {
       const {
         data: { productos },
       } = await API.get<ProductsResponse>('/productos?limit=50');
-      setProducts([...products, ...productos]);
+      setProducts(productos);
     } catch (error) {
       console.error(error);
     } finally {

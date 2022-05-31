@@ -23,7 +23,7 @@ interface ProductsScreenProps extends StackScreenProps<RootProductsStackParamLis
 
 const ProductsScreen = ({ navigation: { navigate } }: ProductsScreenProps) => {
   const { top } = useSafeAreaInsets();
-  const { products } = useContext(ProductsContext);
+  const { products, loading, loadProducts } = useContext(ProductsContext);
 
   const handleNavigateToProduct = (product: Product) => {
     navigate('Product', { product });
@@ -31,6 +31,10 @@ const ProductsScreen = ({ navigation: { navigate } }: ProductsScreenProps) => {
 
   const handleAddNewProduct = () => {
     navigate('Product', { product: {} as Product });
+  };
+
+  const handleProductsRefresh = () => {
+    loadProducts();
   };
 
   return (
@@ -41,6 +45,8 @@ const ProductsScreen = ({ navigation: { navigate } }: ProductsScreenProps) => {
         renderItem={({ item }) => <_ProductItem product={item} onPress={() => handleNavigateToProduct(item)} />}
         ListHeaderComponent={<HeaderTitle title="Products" rightComponent={<_RightHeaderButton onPress={handleAddNewProduct} />} />}
         ItemSeparatorComponent={_ItemSeparator}
+        refreshing={loading}
+        onRefresh={handleProductsRefresh}
       />
     </View>
   );
