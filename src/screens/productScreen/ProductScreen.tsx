@@ -9,8 +9,8 @@ import { styles } from './ProductScreen.styles';
 import { useForm, useCategory } from '../../hooks';
 import { Category } from '../../models/categories.model';
 import { RootProductsStackParamList } from '../../routes/routes';
+import { Button, HeaderTitle, TextInputForm } from '../../components';
 import { ProductsContext } from '../../context/productsContext/ProductsContext';
-import { Button, HeaderTitle, LoadingModal, TextInputForm } from '../../components';
 
 interface ProductScreenProps extends StackScreenProps<RootProductsStackParamList, 'Product'> {}
 
@@ -20,8 +20,8 @@ const ProductScreen = ({
   },
 }: ProductScreenProps) => {
   const { top } = useSafeAreaInsets();
-  const { categories, isLoading: loadingCategories } = useCategory();
-  const { loading, loadProductById, addProduct, updateProduct } = useContext(ProductsContext);
+  const { categories } = useCategory();
+  const { loadProductById, addProduct, updateProduct } = useContext(ProductsContext);
   const { _id, categoryId, nombre, img, onChange, setFormValue } = useForm({
     img: '',
     categoryId: '',
@@ -59,7 +59,6 @@ const ProductScreen = ({
 
   return (
     <ScrollView style={{ ...styles.container, paddingTop: top + 20 }}>
-      <LoadingModal isVisible={loading || loadingCategories} />
       <HeaderTitle title={nombre || 'Product name'} />
       <Text style={styles.label}>Name</Text>
       <TextInputForm
